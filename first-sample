@@ -1,1 +1,169 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Упражнение с думи</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+        }
+        .definitions {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+        .word-bank, .sentence-bank {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .word, .sentence {
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #e6f7ff;
+            cursor: grab;
+            user-select: none;
+            margin: 5px;
+        }
+        .sentence {
+            width: 100%;
+            background-color: #f9f9f9;
+            border: 2px dashed #ccc;
+        }
+        .dropzone {
+            border: 2px dashed #0073e6;
+            padding: 10px;
+            min-height: 50px;
+            background-color: #f0f8ff;
+            display: inline-block;
+            width: 200px;
+            text-align: center;
+            vertical-align: top;
+        }
+        .dropzone.filled {
+            background-color: #d4edda;
+        }
+        .results {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Упражнение с думи</h1>
+    <p>Прочетете значението на думите и ги използвайте в подходящия пример.</p>
+
+    <div class="definitions">
+        <strong>Думи и значения:</strong>
+        <ul>
+            <li><strong>обветрен:</strong> Загрубял от вятъра. </li>
+            <li><strong>беззвучен:</strong> Който не издава звук.</li>
+            <li><strong>неподатлив:</strong> Който не се променя лесно под въздействие; устойчив.</li>
+            <li><strong>неумолим:</strong> Който не се поддава на молби или съжаление, непреклонен.</li>
+            <li><strong>умилителен:</strong> Който предизвиква нежност или умиление.</li>
+        </ul>
+    </div>
+
+    <div class="word-bank">
+        <div class="word" id="word1" draggable="true">обветрен</div>
+        <div class="word" id="word2" draggable="true">беззвучен</div>
+        <div class="word" id="word3" draggable="true">неподатлив</div>
+        <div class="word" id="word4" draggable="true">неумолим</div>
+        <div class="word" id="word5" draggable="true">умилителен</div>
+    </div>
+
+    <div class="sentence-bank">
+        <div class="sentence dropzone" id="sentence1">
+           Този хълм е толкова <span id="drop1">____</span>, че едната му страна е останала гола и неплодородна.
+        </div>
+        <div class="sentence dropzone" id="sentence2">
+            Той отправи към нея <span id="drop2">____</span> въпрос с очи, без да произнесе и дума, но тя го разбра.
+        </div>
+        <div class="sentence dropzone" id="sentence3">
+            Този метален лист е <span id="drop3">____</span> на всякакви химикали; не се поврежда дори от силни киселини.
+        </div>
+        <div class="sentence dropzone" id="sentence4">
+            Той беше <span id="drop4">____</span> в решението си и не се поддаде на никакви молби. 
+        </div>
+        <div class="sentence dropzone" id="sentence5">
+            Този малък, беззащитен котарак изглеждаше толкова  <span id="drop5">____</span>, че всеки се спираше, за да го погали.
+        </div>
+    </div>
+
+    <button onclick="checkAnswers()">Провери отговорите</button>
+
+    <div class="results" id="results"></div>
+
+    <script>
+        const words = document.querySelectorAll('.word');
+        const dropzones = document.querySelectorAll('.dropzone');
+        let draggedWord = null;
+
+        words.forEach(word => {
+            word.addEventListener('dragstart', dragStart);
+            word.addEventListener('dragend', dragEnd);
+        });
+
+        dropzones.forEach(dropzone => {
+            dropzone.addEventListener('dragover', dragOver);
+            dropzone.addEventListener('drop', dropWord);
+        });
+
+        function dragStart(e) {
+            draggedWord = e.target;
+            setTimeout(() => {
+                draggedWord.style.display = 'none'; // Скриване на думата по време на влаченето
+            }, 0);
+        }
+
+        function dragEnd(e) {
+            setTimeout(() => {
+                draggedWord.style.display = 'block'; // Възстановяване на видимостта
+                draggedWord = null;
+            }, 0);
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+        }
+
+        function dropWord(e) {
+            e.preventDefault();
+            const dropzone = e.target.closest('.dropzone');
+            const span = dropzone.querySelector('span');
+            if (span && span.innerText === "____" && draggedWord) {
+                span.innerText = draggedWord.innerText;
+                span.parentNode.classList.add('filled');
+                draggedWord.setAttribute('draggable', 'false');
+            }
+        }
+
+        function checkAnswers() {
+            const correctAnswers = {
+                drop1: "обветрен",
+                drop2: "беззвучен",
+                drop3: "неумолим",
+                drop4: "неподатлив",
+                drop5: "умилителен"
+            };
+
+            let correctCount = 0;
+            dropzones.forEach(dropzone => {
+                const span = dropzone.querySelector('span');
+                const id = span.id;
+                if (span.innerText === correctAnswers[id]) {
+                    correctCount++;
+                }
+            });
+
+            document.getElementById('results').innerText = `Вие имате ${correctCount} правилни отговора от 5.`;
+        }
+    </script>
+</body>
+</html>
 
